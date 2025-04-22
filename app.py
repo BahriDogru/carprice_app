@@ -149,21 +149,22 @@ st.markdown("""
 df = pd.read_csv("files/Car_price_clean_data.csv")  # CSV dosyasını yükle
 
 # Model ve train columns'u yükle
-@st.cache_resource(show_spinner="🔄 Model yükleniyor, lütfen bekleyin...")
-def load_model_from_drive():
-    url = "https://drive.google.com/uc?id=1MJS1RCRXZGKVwQ0xlDr4oXZdh6NZZNRx"
-    model_path = "model_cache/voting_clf.pkl"
+# @st.cache_resource(show_spinner="🔄 Model yükleniyor, lütfen bekleyin...")
+# def load_model_from_drive():
+#     url = "https://drive.google.com/uc?id=1MJS1RCRXZGKVwQ0xlDr4oXZdh6NZZNRx"
+#     model_path = "model_cache/voting_clf.pkl"
 
-    os.makedirs("model_cache", exist_ok=True)
+#     os.makedirs("model_cache", exist_ok=True)
 
-    if not os.path.exists(model_path):
-        response = requests.get(url)
-        with open(model_path, "wb") as f:
-            f.write(response.content)
+#     if not os.path.exists(model_path):
+#         response = requests.get(url)
+#         with open(model_path, "wb") as f:
+#             f.write(response.content)
 
-    return joblib.load(model_path)
-model = load_model_from_drive()
-train_columns = joblib.load("features_names.pkl")
+#     return joblib.load(model_path)
+# model = load_model_from_drive()
+model = joblib.load('final_catboost_model.pkl')
+train_columns = joblib.load("model_features.pkl")
 
 st.title("Araç Fiyat Tahmini")
 st.write("Bu uygulama, aracınızın bilgilerine göre tahmini fiyat sunar.")
@@ -473,7 +474,7 @@ if st.button("Fiyatı Tahmin Et"):
     user_df = Preprocessing.preprocessing(dataframe=user_df)
 
     # train_columns = [col.upper() for col in train_columns]  # Gerekirse bunu aç
-    user_df.columns = user_df.columns.str.upper()  # Gerekirse bunu da aç
+    # user_df.columns = user_df.columns.str.upper()  # Gerekirse bunu da aç
 
     # Eksik kolonları sıfırla doldur
     for col in train_columns:
@@ -482,9 +483,13 @@ if st.button("Fiyatı Tahmin Et"):
 
 
     user_df = user_df[train_columns]
-    predicted_price = model.predict(user_df)[0] 
+    # predicted_price = model.predict(user_df)[0] enes
+
+    predicted_log_price = model.predict(user_df)
+    predicted_price = np.expm1(predicted_log_price)[0]
     
     # Göster
+    # st.success(f"### Tahmini Araç Fiyatı: {predicted_price:,.0f} TL")
     if avg_model:
         
         model_fark = avg_model - predicted_price
