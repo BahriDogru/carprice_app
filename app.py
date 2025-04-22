@@ -146,7 +146,7 @@ st.markdown("""
 
 
 # Veriyi yükle
-df = pd.read_csv("files\Car_price_clean_data.csv")  # CSV dosyasını yükle
+df = pd.read_csv("files/Car_price_clean_data.csv")  # CSV dosyasını yükle
 
 # Model ve train columns'u yükle
 @st.cache_resource(show_spinner="🔄 Model yükleniyor, lütfen bekleyin...")
@@ -174,7 +174,7 @@ def model_map_load(file_path):
         data = file.read()
         model_map = json.loads(data)
     return model_map
-model_map = model_map_load('files\car_dict.txt')
+model_map = model_map_load('files/car_dict.txt')
 
 # Şehirlerin isimlerini tutan liste
 def city_district_load(file_path):
@@ -182,7 +182,7 @@ def city_district_load(file_path):
         data = file.read()
         data_city_district = ast.literal_eval(data)
     return data_city_district
-city_district = city_district_load('files\province_district_map.txt')
+city_district = city_district_load('files/province_district_map.txt')
 
 # Arçların rengini tutan liste
 colors = ["Beyaz","Gri","Siyah","Gümüş/Metalik Gri","Mavi","Kırmızı","Turuncu","Kahverengi","Yeşil","Sarı","Bej/Krem","Bordo","Antrasit/Koyu Gri", "Diğer"]
